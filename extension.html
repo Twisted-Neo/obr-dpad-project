@@ -1,1 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OBR D-Pad Extension</title>
+  <script src="https://unpkg.com/@owlbear-rodeo/sdk"></script>
+</head>
+<body>
+  <div style="font-family: sans-serif; text-align: center; padding: 10px;">
+    <h4>D-Pad Extension Active</h4>
+    <p id="status">Connecting to OBR...</p>
+  </div>
 
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-yGrlK0EO1mP7F9VRjNk8-eyNER1d9YI",
+      authDomain: "obr-controller.firebaseapp.com",
+      projectId: "obr-controller",
+      databaseURL: "https://obr-controller-default-rtdb.europe-west1.firebasedatabase.app"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Wait for Owlbear Rodeo to be ready
+    window.OBR.onReady(() => {
+      document.getElementById("status").innerText = "Listening for phone input...";
+
+      // Listen for commands from the phone
+      onValue(ref(db, 'moves'), async (snapshot) => {
+        const data = snapshot.val();
+        if (!data) return;
+
+        // Get selected tokens using standard SDK
+        const selectedIds = await window.OBR.player.getSelection();
+        if (!selectedIds || selectedIds.length === 0) return;
+
+        const tokenId = selectedIds[0];
+        const GRID_SIZE = 150; // Pixels per square
+
+        // Shift the token position
+        await window.OBR.scene.items.updateItems([tokenId], (items) => {
+          const token = items[0];
+          if (token && token.position) {
+            if (data.direction === "up") token.position.y -= GRID_SIZE;
+            if (data.direction === "down") token.position.y += GRID_SIZE;
+            if (data.direction === "left") token.position.x -= GRID_SIZE;
+            if (data.direction === "right") token.position.x += GRID_SIZE;
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
