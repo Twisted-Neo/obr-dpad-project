@@ -1,1 +1,13 @@
-
+{
+  "name": "Phone D-Pad Controller",
+  "version": "1.0.0",
+  "manifest_version": 1,
+  "description": "Control tokens using a mobile phone browser.",
+  "action": {
+    "title": "D-Pad Status",
+    "icon": "https://www.owlbear.rodeo/logo.png",
+    "popover": "/extension.html",
+    "height": 150,
+    "width": 250
+  }
+}
