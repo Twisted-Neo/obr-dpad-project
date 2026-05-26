@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phone Controller</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; background: #222; color: white; padding-top: 50px; }
+    .btn { width: 80px; height: 80px; font-size: 24px; margin: 10px; cursor: pointer; background: #444; color: white; border: none; border-radius: 10px; }
+    .btn:active { background: #666; }
+    .row { display: flex; justify-content: center; align-items: center; }
+    .spacer { width: 80px; height: 80px; margin: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Token D-Pad</h2>
+  
+  <button class="btn" onclick="send('up')">▲</button>
+  <div class="row">
+    <button class="btn" onclick="send('left')">◀</button>
+    <div class="spacer"></div>
+    <button class="btn" onclick="send('right')">▶</button>
+  </div>
+  <button class="btn" onclick="send('down')">▼</button>
 
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-yGrlK0EO1mP7F9VRjNk8-eyNER1d9YI",
+      authDomain: "obr-controller.firebaseapp.com",
+      projectId: "obr-controller",
+      databaseURL: "https://obr-controller-default-rtdb.europe-west1.firebasedatabase.app"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.send = function(dir) {
+      set(ref(db, 'moves'), {
+        direction: dir,
+        timestamp: Date.now()
+      });
+    }
+  </script>
+</body>
+</html>
